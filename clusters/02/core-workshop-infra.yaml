@@ -47,7 +47,7 @@ data:
     http:
       routers:
         my-api:
-          rule: Host(`traefik.cluster-02.workshops.kubernetesfinland.com`)
+          rule: Host(`traefik.cluster-02.workshops.luxaslabs.com`)
           service: api@internal
           entryPoints:
           - traefik
@@ -202,7 +202,7 @@ metadata:
     # Force a short TTL so that DNS record changes can propagate faster
     external-dns.alpha.kubernetes.io/ttl: "30s"
     # Create a DNS record for the traefik API & dashboard
-    external-dns.alpha.kubernetes.io/hostname: "traefik.cluster-02.workshops.kubernetesfinland.com"
+    external-dns.alpha.kubernetes.io/hostname: "traefik.cluster-02.workshops.luxaslabs.com"
 spec:
   ports:
     - name: http
@@ -295,7 +295,7 @@ spec:
             - --source=ingress
             - --source=service
             # Makes ExternalDNS see only the hosted zones matching provided domain, omit to process all available hosted zones
-            - --domain-filter=workshops.kubernetesfinland.com.
+            - --domain-filter=workshops.luxaslabs.com.
             - --provider=digitalocean
             # Prevents ExternalDNS from deleting any records, omit to enable full synchronization
             - --policy=upsert-only
@@ -415,7 +415,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: "cluster-02.workshops.kubernetesfinland.com"
+    - host: "cluster-02.workshops.luxaslabs.com"
       http:
         paths:
           - path: /

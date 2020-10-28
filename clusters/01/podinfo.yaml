@@ -122,7 +122,7 @@ metadata:
     external-dns.alpha.kubernetes.io/ttl: 30s
 spec:
   rules:
-    - host: podinfo.cluster-01.workshops.kubernetesfinland.com
+    - host: podinfo.cluster-01.workshops.luxaslabs.com
       http:
         paths:
           - path: /
@@ -134,7 +134,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-jwt-test-va6gu
+  name: workshopctl-podinfo-jwt-test-w774f
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -165,7 +165,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-grpc-test-odfp6
+  name: workshopctl-podinfo-grpc-test-xx5re
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -189,7 +189,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-service-test-vyl3j
+  name: workshopctl-podinfo-service-test-5prml
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo

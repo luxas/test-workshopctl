@@ -122,7 +122,7 @@ metadata:
     external-dns.alpha.kubernetes.io/ttl: 30s
 spec:
   rules:
-    - host: podinfo.cluster-03.workshops.kubernetesfinland.com
+    - host: podinfo.cluster-03.workshops.luxaslabs.com
       http:
         paths:
           - path: /
@@ -130,11 +130,41 @@ spec:
               serviceName: workshopctl-podinfo
               servicePort: http
 ---
+# Source: podinfo/templates/tests/service.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: workshopctl-podinfo-service-test-ac6kh
+  labels:
+    helm.sh/chart: podinfo-5.0.3
+    app.kubernetes.io/name: workshopctl-podinfo
+    app.kubernetes.io/version: "5.0.3"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test-success
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    sidecar.istio.io/inject: "false"
+    linkerd.io/inject: disabled
+    appmesh.k8s.aws/sidecarInjectorWebhook: disabled
+spec:
+  containers:
+    - name: curl
+      image: curlimages/curl:7.69.0
+      command:
+        - sh
+        - -c
+        - |
+          curl -s ${PODINFO_SVC}/api/info | grep version
+      env:
+        - name: PODINFO_SVC
+          value: "workshopctl-podinfo.default:9898"
+  restartPolicy: Never
+---
 # Source: podinfo/templates/tests/jwt.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-jwt-test-vg12u
+  name: workshopctl-podinfo-jwt-test-o0ufi
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -161,41 +191,11 @@ spec:
           value: "workshopctl-podinfo.default:9898"
   restartPolicy: Never
 ---
-# Source: podinfo/templates/tests/service.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: workshopctl-podinfo-service-test-2j0jd
-  labels:
-    helm.sh/chart: podinfo-5.0.3
-    app.kubernetes.io/name: workshopctl-podinfo
-    app.kubernetes.io/version: "5.0.3"
-    app.kubernetes.io/managed-by: Helm
-  annotations:
-    "helm.sh/hook": test-success
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-    sidecar.istio.io/inject: "false"
-    linkerd.io/inject: disabled
-    appmesh.k8s.aws/sidecarInjectorWebhook: disabled
-spec:
-  containers:
-    - name: curl
-      image: curlimages/curl:7.69.0
-      command:
-        - sh
-        - -c
-        - |
-          curl -s ${PODINFO_SVC}/api/info | grep version
-      env:
-        - name: PODINFO_SVC
-          value: "workshopctl-podinfo.default:9898"
-  restartPolicy: Never
----
 # Source: podinfo/templates/tests/grpc.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-grpc-test-6isql
+  name: workshopctl-podinfo-grpc-test-qma1a
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
