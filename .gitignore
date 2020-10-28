@@ -2,3 +2,5 @@ bin
 workshopctl.yaml
 .cache
 .kubeconfig
+.kube
+
