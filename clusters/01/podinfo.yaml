@@ -33,7 +33,7 @@ metadata:
     app.kubernetes.io/version: "5.0.3"
     app.kubernetes.io/managed-by: Helm
 spec:
-  replicas: 1
+  replicas: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -132,7 +132,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-grpc-test-qd3zt
+  name: workshopctl-podinfo-grpc-test-evbw3
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -156,7 +156,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-service-test-pjf30
+  name: workshopctl-podinfo-service-test-xuxg7
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -186,7 +186,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-jwt-test-6fnwk
+  name: workshopctl-podinfo-jwt-test-oblj4
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
