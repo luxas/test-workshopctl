@@ -122,7 +122,7 @@ metadata:
     external-dns.alpha.kubernetes.io/ttl: 30s
 spec:
   rules:
-    - host: podinfo.cluster-02.workshops.kubernetesfinland.com
+    - host: podinfo.cluster-03.workshops.kubernetesfinland.com
       http:
         paths:
           - path: /
@@ -130,11 +130,42 @@ spec:
               serviceName: workshopctl-podinfo
               servicePort: http
 ---
+# Source: podinfo/templates/tests/jwt.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: workshopctl-podinfo-jwt-test-vg12u
+  labels:
+    helm.sh/chart: podinfo-5.0.3
+    app.kubernetes.io/name: workshopctl-podinfo
+    app.kubernetes.io/version: "5.0.3"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test-success
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    sidecar.istio.io/inject: "false"
+    linkerd.io/inject: disabled
+    appmesh.k8s.aws/sidecarInjectorWebhook: disabled
+spec:
+  containers:
+    - name: tools
+      image: giantswarm/tiny-tools
+      command:
+        - sh
+        - -c
+        - |
+          TOKEN=$(curl -sd 'test' ${PODINFO_SVC}/token | jq -r .token) &&
+          curl -sH "Authorization: Bearer ${TOKEN}" ${PODINFO_SVC}/token/validate | grep test
+      env:
+        - name: PODINFO_SVC
+          value: "workshopctl-podinfo.default:9898"
+  restartPolicy: Never
+---
 # Source: podinfo/templates/tests/service.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-service-test-7evmv
+  name: workshopctl-podinfo-service-test-2j0jd
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -164,7 +195,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-grpc-test-2mcyx
+  name: workshopctl-podinfo-grpc-test-6isql
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -182,35 +213,4 @@ spec:
       image: stefanprodan/grpc_health_probe:v0.3.0
       command: ['grpc_health_probe']
       args: ['-addr=workshopctl-podinfo.default:9999']
-  restartPolicy: Never
----
-# Source: podinfo/templates/tests/jwt.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: workshopctl-podinfo-jwt-test-lmp3z
-  labels:
-    helm.sh/chart: podinfo-5.0.3
-    app.kubernetes.io/name: workshopctl-podinfo
-    app.kubernetes.io/version: "5.0.3"
-    app.kubernetes.io/managed-by: Helm
-  annotations:
-    "helm.sh/hook": test-success
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-    sidecar.istio.io/inject: "false"
-    linkerd.io/inject: disabled
-    appmesh.k8s.aws/sidecarInjectorWebhook: disabled
-spec:
-  containers:
-    - name: tools
-      image: giantswarm/tiny-tools
-      command:
-        - sh
-        - -c
-        - |
-          TOKEN=$(curl -sd 'test' ${PODINFO_SVC}/token | jq -r .token) &&
-          curl -sH "Authorization: Bearer ${TOKEN}" ${PODINFO_SVC}/token/validate | grep test
-      env:
-        - name: PODINFO_SVC
-          value: "workshopctl-podinfo.default:9898"
   restartPolicy: Never
