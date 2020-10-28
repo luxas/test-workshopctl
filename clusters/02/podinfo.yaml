@@ -106,35 +106,11 @@ spec:
         - name: data
           emptyDir: {}
 ---
-# Source: podinfo/templates/tests/grpc.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: workshopctl-podinfo-grpc-test-za74z
-  labels:
-    helm.sh/chart: podinfo-5.0.3
-    app.kubernetes.io/name: workshopctl-podinfo
-    app.kubernetes.io/version: "5.0.3"
-    app.kubernetes.io/managed-by: Helm
-  annotations:
-    "helm.sh/hook": test-success
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-    sidecar.istio.io/inject: "false"
-    linkerd.io/inject: disabled
-    appmesh.k8s.aws/sidecarInjectorWebhook: disabled
-spec:
-  containers:
-    - name: grpc-health-probe
-      image: stefanprodan/grpc_health_probe:v0.3.0
-      command: ['grpc_health_probe']
-      args: ['-addr=workshopctl-podinfo.default:9999']
-  restartPolicy: Never
----
 # Source: podinfo/templates/tests/service.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-service-test-ucae5
+  name: workshopctl-podinfo-service-test-mm1yl
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -160,11 +136,35 @@ spec:
           value: "workshopctl-podinfo.default:9898"
   restartPolicy: Never
 ---
+# Source: podinfo/templates/tests/grpc.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: workshopctl-podinfo-grpc-test-ig9fo
+  labels:
+    helm.sh/chart: podinfo-5.0.3
+    app.kubernetes.io/name: workshopctl-podinfo
+    app.kubernetes.io/version: "5.0.3"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test-success
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    sidecar.istio.io/inject: "false"
+    linkerd.io/inject: disabled
+    appmesh.k8s.aws/sidecarInjectorWebhook: disabled
+spec:
+  containers:
+    - name: grpc-health-probe
+      image: stefanprodan/grpc_health_probe:v0.3.0
+      command: ['grpc_health_probe']
+      args: ['-addr=workshopctl-podinfo.default:9999']
+  restartPolicy: Never
+---
 # Source: podinfo/templates/tests/jwt.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-jwt-test-md44q
+  name: workshopctl-podinfo-jwt-test-9alzp
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
