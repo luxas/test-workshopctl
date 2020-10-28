@@ -1,4 +1,4 @@
 bin
 workshopctl.yaml
 .cache
-
+.kubeconfig
