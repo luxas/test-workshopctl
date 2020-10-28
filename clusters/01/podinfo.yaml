@@ -106,11 +106,11 @@ spec:
         - name: data
           emptyDir: {}
 ---
-# Source: podinfo/templates/tests/grpc.yaml
+# Source: podinfo/templates/tests/jwt.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-grpc-test-bxo9g
+  name: workshopctl-podinfo-jwt-test-hzy9d
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -124,17 +124,24 @@ metadata:
     appmesh.k8s.aws/sidecarInjectorWebhook: disabled
 spec:
   containers:
-    - name: grpc-health-probe
-      image: stefanprodan/grpc_health_probe:v0.3.0
-      command: ['grpc_health_probe']
-      args: ['-addr=workshopctl-podinfo.default:9999']
+    - name: tools
+      image: giantswarm/tiny-tools
+      command:
+        - sh
+        - -c
+        - |
+          TOKEN=$(curl -sd 'test' ${PODINFO_SVC}/token | jq -r .token) &&
+          curl -sH "Authorization: Bearer ${TOKEN}" ${PODINFO_SVC}/token/validate | grep test
+      env:
+        - name: PODINFO_SVC
+          value: "workshopctl-podinfo.default:9898"
   restartPolicy: Never
 ---
 # Source: podinfo/templates/tests/service.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-service-test-6fnxt
+  name: workshopctl-podinfo-service-test-bcw9p
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -160,11 +167,11 @@ spec:
           value: "workshopctl-podinfo.default:9898"
   restartPolicy: Never
 ---
-# Source: podinfo/templates/tests/jwt.yaml
+# Source: podinfo/templates/tests/grpc.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-jwt-test-v7iwn
+  name: workshopctl-podinfo-grpc-test-pdr8g
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -178,15 +185,8 @@ metadata:
     appmesh.k8s.aws/sidecarInjectorWebhook: disabled
 spec:
   containers:
-    - name: tools
-      image: giantswarm/tiny-tools
-      command:
-        - sh
-        - -c
-        - |
-          TOKEN=$(curl -sd 'test' ${PODINFO_SVC}/token | jq -r .token) &&
-          curl -sH "Authorization: Bearer ${TOKEN}" ${PODINFO_SVC}/token/validate | grep test
-      env:
-        - name: PODINFO_SVC
-          value: "workshopctl-podinfo.default:9898"
+    - name: grpc-health-probe
+      image: stefanprodan/grpc_health_probe:v0.3.0
+      command: ['grpc_health_probe']
+      args: ['-addr=workshopctl-podinfo.default:9999']
   restartPolicy: Never
