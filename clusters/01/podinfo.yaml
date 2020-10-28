@@ -128,35 +128,11 @@ spec:
               serviceName: workshopctl-podinfo
               servicePort: http
 ---
-# Source: podinfo/templates/tests/grpc.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: workshopctl-podinfo-grpc-test-erk6c
-  labels:
-    helm.sh/chart: podinfo-5.0.3
-    app.kubernetes.io/name: workshopctl-podinfo
-    app.kubernetes.io/version: "5.0.3"
-    app.kubernetes.io/managed-by: Helm
-  annotations:
-    "helm.sh/hook": test-success
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-    sidecar.istio.io/inject: "false"
-    linkerd.io/inject: disabled
-    appmesh.k8s.aws/sidecarInjectorWebhook: disabled
-spec:
-  containers:
-    - name: grpc-health-probe
-      image: stefanprodan/grpc_health_probe:v0.3.0
-      command: ['grpc_health_probe']
-      args: ['-addr=workshopctl-podinfo.default:9999']
-  restartPolicy: Never
----
 # Source: podinfo/templates/tests/service.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-service-test-ev4jh
+  name: workshopctl-podinfo-service-test-z4jjc
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -186,7 +162,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-jwt-test-fqv9n
+  name: workshopctl-podinfo-jwt-test-6i8vx
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -211,4 +187,28 @@ spec:
       env:
         - name: PODINFO_SVC
           value: "workshopctl-podinfo.default:9898"
+  restartPolicy: Never
+---
+# Source: podinfo/templates/tests/grpc.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: workshopctl-podinfo-grpc-test-8gcrq
+  labels:
+    helm.sh/chart: podinfo-5.0.3
+    app.kubernetes.io/name: workshopctl-podinfo
+    app.kubernetes.io/version: "5.0.3"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test-success
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    sidecar.istio.io/inject: "false"
+    linkerd.io/inject: disabled
+    appmesh.k8s.aws/sidecarInjectorWebhook: disabled
+spec:
+  containers:
+    - name: grpc-health-probe
+      image: stefanprodan/grpc_health_probe:v0.3.0
+      command: ['grpc_health_probe']
+      args: ['-addr=workshopctl-podinfo.default:9999']
   restartPolicy: Never
