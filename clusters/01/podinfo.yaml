@@ -64,6 +64,8 @@ spec:
             - --random-delay=false
             - --random-error=false
           env:
+            - name: PODINFO_UI_MESSAGE
+              value: "Hello world!"
             - name: PODINFO_UI_COLOR
               value: "#34577c"
           ports:
@@ -106,11 +108,55 @@ spec:
         - name: data
           emptyDir: {}
 ---
+# Source: podinfo/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: workshopctl-podinfo
+  labels:
+    helm.sh/chart: podinfo-5.0.3
+    app.kubernetes.io/name: workshopctl-podinfo
+    app.kubernetes.io/version: "5.0.3"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  rules:
+    - host: podinfo.cluster-01.workshopctl.kubernetesfinland.com
+      http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: workshopctl-podinfo
+              servicePort: http
+---
+# Source: podinfo/templates/tests/grpc.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: workshopctl-podinfo-grpc-test-erk6c
+  labels:
+    helm.sh/chart: podinfo-5.0.3
+    app.kubernetes.io/name: workshopctl-podinfo
+    app.kubernetes.io/version: "5.0.3"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test-success
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    sidecar.istio.io/inject: "false"
+    linkerd.io/inject: disabled
+    appmesh.k8s.aws/sidecarInjectorWebhook: disabled
+spec:
+  containers:
+    - name: grpc-health-probe
+      image: stefanprodan/grpc_health_probe:v0.3.0
+      command: ['grpc_health_probe']
+      args: ['-addr=workshopctl-podinfo.default:9999']
+  restartPolicy: Never
+---
 # Source: podinfo/templates/tests/service.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-service-test-rimq7
+  name: workshopctl-podinfo-service-test-ev4jh
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -140,7 +186,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-jwt-test-gb2gv
+  name: workshopctl-podinfo-jwt-test-fqv9n
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -165,28 +211,4 @@ spec:
       env:
         - name: PODINFO_SVC
           value: "workshopctl-podinfo.default:9898"
-  restartPolicy: Never
----
-# Source: podinfo/templates/tests/grpc.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: workshopctl-podinfo-grpc-test-vr4ao
-  labels:
-    helm.sh/chart: podinfo-5.0.3
-    app.kubernetes.io/name: workshopctl-podinfo
-    app.kubernetes.io/version: "5.0.3"
-    app.kubernetes.io/managed-by: Helm
-  annotations:
-    "helm.sh/hook": test-success
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-    sidecar.istio.io/inject: "false"
-    linkerd.io/inject: disabled
-    appmesh.k8s.aws/sidecarInjectorWebhook: disabled
-spec:
-  containers:
-    - name: grpc-health-probe
-      image: stefanprodan/grpc_health_probe:v0.3.0
-      command: ['grpc_health_probe']
-      args: ['-addr=workshopctl-podinfo.default:9999']
   restartPolicy: Never
