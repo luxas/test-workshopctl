@@ -110,7 +110,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-jwt-test-hzy9d
+  name: workshopctl-podinfo-jwt-test-fll8r
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -141,7 +141,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-service-test-bcw9p
+  name: workshopctl-podinfo-service-test-jukt0
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -171,7 +171,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-grpc-test-pdr8g
+  name: workshopctl-podinfo-grpc-test-o0amg
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
