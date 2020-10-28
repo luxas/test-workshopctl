@@ -123,7 +123,7 @@ spec:
     - host: podinfo.cluster-01.workshopctl.kubernetesfinland.com
       http:
         paths:
-          - path: /*
+          - path: /
             backend:
               serviceName: workshopctl-podinfo
               servicePort: http
@@ -132,7 +132,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-grpc-test-ey1iq
+  name: workshopctl-podinfo-grpc-test-qd3zt
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -152,11 +152,41 @@ spec:
       args: ['-addr=workshopctl-podinfo.default:9999']
   restartPolicy: Never
 ---
+# Source: podinfo/templates/tests/service.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: workshopctl-podinfo-service-test-pjf30
+  labels:
+    helm.sh/chart: podinfo-5.0.3
+    app.kubernetes.io/name: workshopctl-podinfo
+    app.kubernetes.io/version: "5.0.3"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test-success
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    sidecar.istio.io/inject: "false"
+    linkerd.io/inject: disabled
+    appmesh.k8s.aws/sidecarInjectorWebhook: disabled
+spec:
+  containers:
+    - name: curl
+      image: curlimages/curl:7.69.0
+      command:
+        - sh
+        - -c
+        - |
+          curl -s ${PODINFO_SVC}/api/info | grep version
+      env:
+        - name: PODINFO_SVC
+          value: "workshopctl-podinfo.default:9898"
+  restartPolicy: Never
+---
 # Source: podinfo/templates/tests/jwt.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-jwt-test-xo0w8
+  name: workshopctl-podinfo-jwt-test-6fnwk
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -178,36 +208,6 @@ spec:
         - |
           TOKEN=$(curl -sd 'test' ${PODINFO_SVC}/token | jq -r .token) &&
           curl -sH "Authorization: Bearer ${TOKEN}" ${PODINFO_SVC}/token/validate | grep test
-      env:
-        - name: PODINFO_SVC
-          value: "workshopctl-podinfo.default:9898"
-  restartPolicy: Never
----
-# Source: podinfo/templates/tests/service.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: workshopctl-podinfo-service-test-qt3fw
-  labels:
-    helm.sh/chart: podinfo-5.0.3
-    app.kubernetes.io/name: workshopctl-podinfo
-    app.kubernetes.io/version: "5.0.3"
-    app.kubernetes.io/managed-by: Helm
-  annotations:
-    "helm.sh/hook": test-success
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-    sidecar.istio.io/inject: "false"
-    linkerd.io/inject: disabled
-    appmesh.k8s.aws/sidecarInjectorWebhook: disabled
-spec:
-  containers:
-    - name: curl
-      image: curlimages/curl:7.69.0
-      command:
-        - sh
-        - -c
-        - |
-          curl -s ${PODINFO_SVC}/api/info | grep version
       env:
         - name: PODINFO_SVC
           value: "workshopctl-podinfo.default:9898"

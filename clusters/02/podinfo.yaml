@@ -123,16 +123,16 @@ spec:
     - host: podinfo.cluster-02.workshopctl.kubernetesfinland.com
       http:
         paths:
-          - path: /*
+          - path: /
             backend:
               serviceName: workshopctl-podinfo
               servicePort: http
 ---
-# Source: podinfo/templates/tests/grpc.yaml
+# Source: podinfo/templates/tests/service.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-grpc-test-fp0ac
+  name: workshopctl-podinfo-service-test-vpk40
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -146,17 +146,23 @@ metadata:
     appmesh.k8s.aws/sidecarInjectorWebhook: disabled
 spec:
   containers:
-    - name: grpc-health-probe
-      image: stefanprodan/grpc_health_probe:v0.3.0
-      command: ['grpc_health_probe']
-      args: ['-addr=workshopctl-podinfo.default:9999']
+    - name: curl
+      image: curlimages/curl:7.69.0
+      command:
+        - sh
+        - -c
+        - |
+          curl -s ${PODINFO_SVC}/api/info | grep version
+      env:
+        - name: PODINFO_SVC
+          value: "workshopctl-podinfo.default:9898"
   restartPolicy: Never
 ---
 # Source: podinfo/templates/tests/jwt.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-jwt-test-a3upx
+  name: workshopctl-podinfo-jwt-test-rmyw4
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -183,11 +189,11 @@ spec:
           value: "workshopctl-podinfo.default:9898"
   restartPolicy: Never
 ---
-# Source: podinfo/templates/tests/service.yaml
+# Source: podinfo/templates/tests/grpc.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: workshopctl-podinfo-service-test-0mufm
+  name: workshopctl-podinfo-grpc-test-unwb6
   labels:
     helm.sh/chart: podinfo-5.0.3
     app.kubernetes.io/name: workshopctl-podinfo
@@ -201,14 +207,8 @@ metadata:
     appmesh.k8s.aws/sidecarInjectorWebhook: disabled
 spec:
   containers:
-    - name: curl
-      image: curlimages/curl:7.69.0
-      command:
-        - sh
-        - -c
-        - |
-          curl -s ${PODINFO_SVC}/api/info | grep version
-      env:
-        - name: PODINFO_SVC
-          value: "workshopctl-podinfo.default:9898"
+    - name: grpc-health-probe
+      image: stefanprodan/grpc_health_probe:v0.3.0
+      command: ['grpc_health_probe']
+      args: ['-addr=workshopctl-podinfo.default:9999']
   restartPolicy: Never
